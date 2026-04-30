@@ -1,0 +1,167 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2026-04-18 11:21:02
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft Ajisai;
+
+GMAT Ajisai.DateFormat = UTCGregorian;
+GMAT Ajisai.Epoch = '10 Sep 2022 01:52:00.000';
+
+GMAT Ajisai.CoordinateSystem = EarthICRF;
+GMAT Ajisai.DisplayStateType = Cartesian;
+
+GMAT Ajisai.X = -5779.589406299998;
+GMAT Ajisai.Y = -1075.41266666;
+GMAT Ajisai.Z = 5229.47090164;
+
+GMAT Ajisai.VX = -1.26874573;
+GMAT Ajisai.VY = -6.448777509999999;
+GMAT Ajisai.VZ = -2.72703921;
+GMAT Ajisai.DryMass = 685;
+GMAT Ajisai.Cd = 2;
+GMAT Ajisai.Cr = 1.039;
+GMAT Ajisai.DragArea = 3.63;
+GMAT Ajisai.SRPArea = 3.63;
+GMAT Ajisai.NAIFId = -10001001;
+GMAT Ajisai.NAIFIdReferenceFrame = -9001001;
+GMAT Ajisai.OrbitColor = Red;
+GMAT Ajisai.TargetColor = Teal;
+GMAT Ajisai.EstimationStateType = 'Cartesian';
+GMAT Ajisai.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT Ajisai.CdSigma = 1e+070;
+GMAT Ajisai.CrSigma = 1e+070;
+GMAT Ajisai.Id = 'SatId';
+GMAT Ajisai.Attitude = CoordinateSystemFixed;
+GMAT Ajisai.SPADSRPScaleFactor = 1;
+GMAT Ajisai.ModelFile = 'aura.3ds';
+GMAT Ajisai.ModelOffsetX = 0;
+GMAT Ajisai.ModelOffsetY = 0;
+GMAT Ajisai.ModelOffsetZ = 0;
+GMAT Ajisai.ModelRotationX = 0;
+GMAT Ajisai.ModelRotationY = 0;
+GMAT Ajisai.ModelRotationZ = 0;
+GMAT Ajisai.ModelScale = 1;
+GMAT Ajisai.AttitudeDisplayStateType = 'Quaternion';
+GMAT Ajisai.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT Ajisai.AttitudeCoordinateSystem = EarthICRF;
+GMAT Ajisai.EulerAngleSequence = '321';
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel FM;
+GMAT FM.CentralBody = Earth;
+GMAT FM.PrimaryBodies = {Earth};
+GMAT FM.PointMasses = {Luna, Sun};
+GMAT FM.SRP = On;
+GMAT FM.RelativisticCorrection = On;
+GMAT FM.ErrorControl = RSSStep;
+GMAT FM.GravityField.Earth.Degree = 40;
+GMAT FM.GravityField.Earth.Order = 40;
+GMAT FM.GravityField.Earth.PotentialFile = 'D:\gmat\bin\..\data\gravity\earth\JGM2.cof';
+GMAT FM.GravityField.Earth.EarthTideModel = 'None';
+GMAT FM.Drag.AtmosphereModel = MSISE90;
+GMAT FM.Drag.HistoricWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT FM.Drag.PredictedWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT FM.Drag.CSSISpaceWeatherFile = 'SpaceWeather-All-v1.2.txt';
+GMAT FM.Drag.SchattenFile = 'SchattenPredict.txt';
+GMAT FM.Drag.F107 = 150;
+GMAT FM.Drag.F107A = 150;
+GMAT FM.Drag.MagneticIndex = 3;
+GMAT FM.Drag.SchattenErrorModel = 'Nominal';
+GMAT FM.Drag.SchattenTimingModel = 'NominalCycle';
+GMAT FM.SRP.Flux = 1367;
+GMAT FM.SRP.SRPModel = Spherical;
+GMAT FM.SRP.Nominal_Sun = 149597870.691;
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator Prop;
+GMAT Prop.FM = FM;
+GMAT Prop.Type = RungeKutta89;
+GMAT Prop.InitialStepSize = 240;
+GMAT Prop.Accuracy = 1e-012;
+GMAT Prop.MinStep = 240;
+GMAT Prop.MaxStep = 240;
+GMAT Prop.MaxStepAttempts = 50;
+GMAT Prop.StopIfAccuracyIsViolated = false;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create EphemerisFile EphemerisFile1;
+GMAT EphemerisFile1.UpperLeft = [ 0.03235294117647059 0.06840796019900497 ];
+GMAT EphemerisFile1.Size = [ 0.5941176470588235 0.7873134328358209 ];
+GMAT EphemerisFile1.RelativeZOrder = 24;
+GMAT EphemerisFile1.Maximized = false;
+GMAT EphemerisFile1.Spacecraft = Ajisai;
+GMAT EphemerisFile1.Filename = 'EphemerisFile1.oem';
+GMAT EphemerisFile1.FileFormat = CCSDS-OEM;
+GMAT EphemerisFile1.EpochFormat = UTCGregorian;
+GMAT EphemerisFile1.InitialEpoch = InitialSpacecraftEpoch;
+GMAT EphemerisFile1.FinalEpoch = FinalSpacecraftEpoch;
+%GMAT EphemerisFile1.StepSize = IntegratorSteps;
+GMAT EphemerisFile1.StepSize = 240;
+GMAT EphemerisFile1.Interpolator = Lagrange;
+GMAT EphemerisFile1.InterpolationOrder = 7;
+GMAT EphemerisFile1.CoordinateSystem = EarthICRF;
+GMAT EphemerisFile1.OutputFormat = PC;
+GMAT EphemerisFile1.WriteEphemeris = true;
+
+Create OrbitView OrbitView1;
+GMAT OrbitView1.SolverIterations = Current;
+GMAT OrbitView1.UpperLeft = [ 0 0 ];
+GMAT OrbitView1.Size = [ 0.8 0.8495024875621891 ];
+GMAT OrbitView1.RelativeZOrder = 52;
+GMAT OrbitView1.Maximized = false;
+GMAT OrbitView1.Add = {Ajisai, Earth};
+GMAT OrbitView1.CoordinateSystem = EarthICRF;
+GMAT OrbitView1.DrawObject = [ true true ];
+GMAT OrbitView1.DataCollectFrequency = 1;
+GMAT OrbitView1.UpdatePlotFrequency = 50;
+GMAT OrbitView1.NumPointsToRedraw = 0;
+GMAT OrbitView1.ShowPlot = true;
+GMAT OrbitView1.ShowLabels = true;
+GMAT OrbitView1.ViewPointReference = Earth;
+GMAT OrbitView1.ViewPointVector = [ 0 0 30000 ];
+GMAT OrbitView1.ViewDirection = Earth;
+GMAT OrbitView1.ViewScaleFactor = 1;
+GMAT OrbitView1.ViewUpCoordinateSystem = EarthICRF;
+GMAT OrbitView1.ViewUpAxis = Z;
+GMAT OrbitView1.EclipticPlane = Off;
+GMAT OrbitView1.XYPlane = On;
+GMAT OrbitView1.WireFrame = Off;
+GMAT OrbitView1.Axes = On;
+GMAT OrbitView1.Grid = Off;
+GMAT OrbitView1.SunLine = Off;
+GMAT OrbitView1.UseInitialView = On;
+GMAT OrbitView1.StarCount = 7000;
+GMAT OrbitView1.EnableStars = On;
+GMAT OrbitView1.EnableConstellations = On;
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+
+BeginMissionSequence;
+
+Propagate Prop(Ajisai) {Ajisai.ElapsedDays = 25};
